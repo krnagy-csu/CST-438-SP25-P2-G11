@@ -6,6 +6,8 @@ package com.example.demo;
 
 public record User(Integer id, String username, String password){
 
+    // when user is first created it will go through this constructor needing the password to be greater than 6 as we continue we can chnage it up
+    // We can also encrpyt the password in this constructor
     public User {
         // we can check if the password is the correct size and other fields needed
         if (password.length() < 6){
