@@ -21,12 +21,14 @@ public class UserController {
         return "THIS IS THE ROOT ROUTE";
     }
 
+    //On the website URL you can set username?=(anything) and it will display a user object with that name
     @GetMapping("/user")
     public User showUser(@RequestParam(value = "username", defaultValue = "Sebastian") String username, @RequestParam(value = "password", defaultValue = "123456") String password){
         User user = new User(counter.incrementAndGet(), username, password); 
         return user;
     }
 
+    //this will be worked on the future once we set up the tables for our database
     @PostMapping("/addUser")
     public User addUser(User user){
         return user;
