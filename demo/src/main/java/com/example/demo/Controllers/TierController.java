@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.Controllers;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
