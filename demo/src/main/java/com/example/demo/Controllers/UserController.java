@@ -15,11 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.example.demo.Service.UserService;
 import com.example.demo.Tables.User;
 import com.example.demo.Tables.UserRecord;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -52,6 +53,9 @@ public class UserController {
     // public User addUser(User user){
     //     return user;
     // }
+
+    @GetMapping("/deleteUser")
+    public boolean deleteUser(User user){return userService.deleteUser();}
 
     
 }
