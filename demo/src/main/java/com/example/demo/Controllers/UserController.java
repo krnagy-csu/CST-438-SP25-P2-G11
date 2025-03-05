@@ -12,14 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 import com.example.demo.Service.UserService;
 import com.example.demo.Tables.User;
 import com.example.demo.Tables.UserRecord;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/user")
@@ -29,7 +35,7 @@ public class UserController {
     private UserService userService;
 
     private final AtomicInteger counter = new AtomicInteger();
-    
+
     @GetMapping("/")
     public String index() {
         return "THIS IS THE USER ROOT ROUTE";
@@ -37,7 +43,7 @@ public class UserController {
 
     //this one works and gets all the users from the database
     @GetMapping("/all")
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
@@ -48,14 +54,19 @@ public class UserController {
     //     return user;
     // }
 
-    //this will be worked on the future once we set up the tables for our database
-    // @PostMapping("/add")
-    // public User addUser(User user){
-    //     return user;
-    // }
 
-    @GetMapping("/deleteUser")
-    public boolean deleteUser(User user){return userService.deleteUser();}
+    @PostMapping("/addUser")
+    public boolean addUser(@RequestBody User user) {
+        return userService.addUser(user);
+    }
 
-    
+    @DeleteMapping("/deleteUser/{id}")
+    public boolean deleteUser(@PathVariable Integer id) {
+        return userService.deleteUser(id);
+    }
+
+    @PatchMapping("/editUser/{id}")
+    public boolean editUser(@PathVariable Integer id, @RequestBody User userUpdates) {
+        return userService.editUser(id,userUpdates);
+    }
 }
