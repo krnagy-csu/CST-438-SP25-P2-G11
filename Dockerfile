@@ -1,7 +1,7 @@
 FROM openjdk:17-jdk-slim AS build
 WORKDIR /app
 COPY . .
-RUN ./gradlew build --no-daemon
+RUN demo/gradlew build --no-daemon
 
 FROM openjdk:17-jdk-slim
 
