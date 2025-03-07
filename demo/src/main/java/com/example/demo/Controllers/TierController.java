@@ -4,14 +4,19 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Service.TierService;
 import com.example.demo.Tables.Tier;
+import com.example.demo.Tables.User;
 
 @RestController
 @RequestMapping("/tier")
@@ -30,6 +35,21 @@ public class TierController {
     @GetMapping("/all")
     public List<Tier> getAllTiers(){
         return tierService.getAllTiers();
+    }
+
+    @PostMapping("/add")
+    public void addTier(@RequestBody Tier tier){
+        tierService.addTier(tier);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteTier(@PathVariable Integer id){
+        tierService.deleteTier(id);
+    }
+
+    @PatchMapping("/edit/{id}")
+    public void editTier(@PathVariable Integer id, @RequestBody Tier tierChanges){
+        tierService.editTier(id, tierChanges);
     }
 
 }
