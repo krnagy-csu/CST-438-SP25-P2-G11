@@ -17,6 +17,14 @@ public class TierService {
         return tierRepo.findAll();
     }
 
+    public Tier getTier(Integer id){
+        return tierRepo.findById(id).orElse(null);
+    }
+
+    public List<Tier> getTiersBySubject(String subject){
+        return tierRepo.findBySubject(subject);
+    }
+
     public void addTier(Tier tier){
         tierRepo.save(tier);
     }
@@ -62,8 +70,19 @@ public class TierService {
         }
 
         tierRepo.save(tierByID);
+    }
 
+    public void putTier(Integer id, Tier newTier){
+        Tier currentTier = tierRepo.findById(id).orElse(null);
 
+        currentTier.setS(newTier.getS());
+        currentTier.setA(newTier.getA());
+        currentTier.setB(newTier.getB());
+        currentTier.setC(newTier.getC());
+        currentTier.setD(newTier.getD());
+        currentTier.setF(newTier.getF());
+
+        tierRepo.save(currentTier);
     }
 
 }

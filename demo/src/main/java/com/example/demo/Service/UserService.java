@@ -18,6 +18,11 @@ public class UserService {
         return userRepo.findAll();
     }
 
+    public User getUser(Integer id){
+        return userRepo.findById(id).orElse(null);
+    }
+
+
     public boolean deleteUser(Integer id) {
         if (userRepo.existsById(id)) { //checks if user exists before deleting
             userRepo.deleteById(id);
@@ -52,5 +57,14 @@ public class UserService {
         //saves changes
         userRepo.save(existingUser);
         return true;
+    }
+
+    public void putUser(Integer id, User newUser){
+        User currentUser = userRepo.findById(id).orElse(null);
+
+        currentUser.setUsername(newUser.getUsername());
+        currentUser.setPassword(newUser.getPassword());
+
+        userRepo.save(currentUser);
     }
 }
