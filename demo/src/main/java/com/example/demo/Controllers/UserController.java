@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -47,6 +48,11 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/{id}")
+    public User getUser(Integer id){
+        return userService.getUser(id);
+    }
+
     //On the website URL you can set username?=(anything) and it will display a user object with that name
     // @GetMapping("/info")
     // public User showUser(@RequestParam(value = "username", defaultValue = "Sebastian") String username, @RequestParam(value = "password", defaultValue = "123456") String password){
@@ -68,5 +74,10 @@ public class UserController {
     @PatchMapping("/editUser/{id}")
     public boolean editUser(@PathVariable Integer id, @RequestBody User userUpdates) {
         return userService.editUser(id,userUpdates);
+    }
+
+    @PutMapping("/change/{id}")
+    public void putUser(@PathVariable Integer id, @RequestBody User userUpdates){
+        userService.putUser(id, userUpdates);
     }
 }
