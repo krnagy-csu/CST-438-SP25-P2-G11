@@ -39,14 +39,14 @@ public class TierController {
     }
 
     @GetMapping("/{id}")
-    public Tier getTier(Integer id){
+    public Tier getTier(@PathVariable Integer id){
         return tierService.getTier(id);
     }
 
     //THIS RETURNS A LIST OF TIERS WITH THE SAME SUBJECT
     //could help when working with machine learning stuff to match the tiers with same subject
     @GetMapping("/{subject}")
-    public List<Tier> getTiersBySubject(String subject){
+    public List<Tier> getTiersBySubject(@PathVariable String subject){
         return tierService.getTiersBySubject(subject);
     }
 
