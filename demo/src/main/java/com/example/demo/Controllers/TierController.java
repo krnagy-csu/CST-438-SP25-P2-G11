@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Service.TierService;
 import com.example.demo.Tables.Tier;
-import com.example.demo.Tables.User;
 
 @RestController
 @RequestMapping("/tier")
@@ -45,7 +45,7 @@ public class TierController {
 
     //THIS RETURNS A LIST OF TIERS WITH THE SAME SUBJECT
     //could help when working with machine learning stuff to match the tiers with same subject
-    @GetMapping("/{subject}")
+    @GetMapping("/subject/{subject}")
     public List<Tier> getTiersBySubject(@PathVariable String subject){
         return tierService.getTiersBySubject(subject);
     }
