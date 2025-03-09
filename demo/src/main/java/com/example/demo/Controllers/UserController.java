@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.Service.UserService;
 import com.example.demo.Tables.User;
-import com.example.demo.Tables.UserRecord;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -34,8 +32,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    private final AtomicInteger counter = new AtomicInteger();
 
     @GetMapping("/")
     public String index() {
@@ -52,14 +48,6 @@ public class UserController {
     public User getUser(@PathVariable Integer id){
         return userService.getUser(id);
     }
-
-    //On the website URL you can set username?=(anything) and it will display a user object with that name
-    // @GetMapping("/info")
-    // public User showUser(@RequestParam(value = "username", defaultValue = "Sebastian") String username, @RequestParam(value = "password", defaultValue = "123456") String password){
-    //     User user = new User(username, password); 
-    //     return user;
-    // }
-
 
     @PostMapping("/addUser")
     public boolean addUser(@RequestBody User user) {
