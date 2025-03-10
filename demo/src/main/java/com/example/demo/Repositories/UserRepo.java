@@ -8,5 +8,5 @@ import com.example.demo.Tables.User;
 //JPA has the CRUD operations
 
  public interface UserRepo extends JpaRepository<User, Integer>{
-    
+    User findByUsername(String username);
  }
