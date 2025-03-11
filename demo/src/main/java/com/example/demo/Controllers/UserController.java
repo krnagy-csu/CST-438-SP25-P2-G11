@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.Service.UserService;
 import com.example.demo.Tables.User;
-import com.example.demo.Tables.UserRecord;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -33,8 +32,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    private final AtomicInteger counter = new AtomicInteger();
 
     @GetMapping("/")
     public String index() {
@@ -47,15 +44,17 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    //On the website URL you can set username?=(anything) and it will display a user object with that name
-    // @GetMapping("/info")
-    // public User showUser(@RequestParam(value = "username", defaultValue = "Sebastian") String username, @RequestParam(value = "password", defaultValue = "123456") String password){
-    //     User user = new User(username, password); 
-    //     return user;
-    // }
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Integer id){
+        return userService.getUser(id);
+    }
 
+    @GetMapping("/username/{username}")
+    public User getUserByUsername(@PathVariable String username){
+        return userService.getUserByUsername(username);
+    }
 
-    @PostMapping("/addUser")
+    @PostMapping("/add")
     public boolean addUser(@RequestBody User user) {
         return userService.addUser(user);
     }
@@ -68,5 +67,10 @@ public class UserController {
     @PatchMapping("/editUser/{id}")
     public boolean editUser(@PathVariable Integer id, @RequestBody User userUpdates) {
         return userService.editUser(id,userUpdates);
+    }
+
+    @PutMapping("/change/{id}")
+    public void putUser(@PathVariable Integer id, @RequestBody User userUpdates){
+        userService.putUser(id, userUpdates);
     }
 }
