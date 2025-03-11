@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Dserver.port=$PORT -jar demo/build/libs/cst438-project2.jar
+web: java $JAVA_OPTS -Dserver.port=$PORT -jar demo/build/libs/demo-0.0.1-SNAPSHOT.jar
