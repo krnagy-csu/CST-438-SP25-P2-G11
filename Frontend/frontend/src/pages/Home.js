@@ -8,7 +8,7 @@ export default function Home() {
   useEffect(() => {
     const fetchMessage = async () => {
       try {
-        const response = await fetch("http://localhost:8080/");
+        const response = await fetch("https://cst438-project2-33edc6317781.herokuapp.com/");
         const data = await response.text();
         console.log(data);
         setMessage(data);

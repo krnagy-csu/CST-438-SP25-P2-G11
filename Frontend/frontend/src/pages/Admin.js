@@ -7,7 +7,7 @@ export default function Admin() {
 
     // Fetch users from the database
     useEffect(() => {
-        fetch("http://localhost:8080/user/all") 
+        fetch("https://cst438-project2-33edc6317781.herokuapp.com/user/all") 
             .then((response) => response.json())
             .then((data) => setUsers(data))
             .catch((error) => console.error("Error fetching users:", error));
@@ -22,7 +22,7 @@ export default function Admin() {
 
     // Save updated user data
     const handleSave = (user) => {
-        fetch(`http://localhost:8080/user/editUser/${user.id}`, {
+        fetch(`https://cst438-project2-33edc6317781.herokuapp.com/user/editUser/${user.id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export default function Admin() {
 
     // Delete user from database
     const handleDelete = (id) => {
-        fetch(`http://localhost:8080/user/deleteUser/${id}`, {
+        fetch(`https://cst438-project2-33edc6317781.herokuapp.com/user/deleteUser/${id}`, {
             method: "DELETE",
         })
         .then(response => response.json())
@@ -68,7 +68,7 @@ export default function Admin() {
             return;
         }
 
-        fetch("http://localhost:8080/user/addUser", {
+        fetch("https://cst438-project2-33edc6317781.herokuapp.com/user/addUser", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
