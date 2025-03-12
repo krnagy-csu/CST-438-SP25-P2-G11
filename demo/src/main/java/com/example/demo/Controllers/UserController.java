@@ -20,6 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.security.Principal;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 import com.example.demo.Service.UserService;
@@ -30,6 +39,7 @@ import com.example.demo.Tables.User;
 @RequestMapping("/user")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private UserService userService;
 
@@ -40,17 +50,31 @@ public class UserController {
 
     //this one works and gets all the users from the database
     @GetMapping("/all")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<User>> getAllUsers(Principal principal) {
+        logger.info("User '{}' is requesting /user/all", principal.getName());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        logger.info("User roles: {}", auth.getAuthorities());
+
+        List<User> users = userService.getAllUsers();
+        if (users.isEmpty()) {
+            logger.warn("No users found in database.");
+            return ResponseEntity.status(404).body(null);
+        }
+
+        logger.info("Returning {} users.", users.size());
+        return ResponseEntity.ok(users);
     }
 
+
     @GetMapping("/{id}")
-    public User getUser(@PathVariable Integer id){
+    public User getUser(@PathVariable Integer id) {
         return userService.getUser(id);
     }
 
     @GetMapping("/username/{username}")
-    public User getUserByUsername(@PathVariable String username){
+    public User getUserByUsername(@PathVariable String username) {
         return userService.getUserByUsername(username);
     }
 
@@ -60,17 +84,19 @@ public class UserController {
     }
 
     @DeleteMapping("/deleteUser/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public boolean deleteUser(@PathVariable Integer id) {
         return userService.deleteUser(id);
     }
 
     @PatchMapping("/editUser/{id}")
     public boolean editUser(@PathVariable Integer id, @RequestBody User userUpdates) {
-        return userService.editUser(id,userUpdates);
+        return userService.editUser(id, userUpdates);
     }
 
-    @PutMapping("/change/{id}")
-    public void putUser(@PathVariable Integer id, @RequestBody User userUpdates){
-        userService.putUser(id, userUpdates);
+    @PutMapping("/put")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public boolean putUser(@RequestBody User user) {
+        return userService.putUser(user);
     }
 }
