@@ -3,7 +3,7 @@ package com.example.demo.Service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Repositories.UserRepo;
@@ -15,7 +15,14 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
 
-    private BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder(10); 
+    //private BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder(10);
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder) { // Inject via constructor
+        this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public List<User> getAllUsers() {
         return userRepo.findAll();
@@ -41,7 +48,7 @@ public class UserService {
 
     public boolean addUser(User user) {
         try {
-            user.setPassword(bcrypt.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepo.save(user);
             return true;
         } catch (Exception e) {
@@ -60,19 +67,20 @@ public class UserService {
             existingUser.setUsername(userUpdates.getUsername());
         }//updates password
         if (userUpdates.getPassword() != null) {
-            existingUser.setPassword(bcrypt.encode(userUpdates.getPassword()));
+            existingUser.setPassword(passwordEncoder.encode(userUpdates.getPassword()));
         }
         //saves changes
         userRepo.save(existingUser);
         return true;
     }
 
-    public void putUser(Integer id, User newUser){
-        User currentUser = userRepo.findById(id).orElse(null);
-
-        currentUser.setUsername(newUser.getUsername());
-        currentUser.setPassword(bcrypt.encode(newUser.getPassword()));
-
-        userRepo.save(currentUser);
+    public boolean putUser(User user){
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepo.save(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
