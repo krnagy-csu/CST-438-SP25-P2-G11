@@ -12,13 +12,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -42,6 +48,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
         try {
+            System.out.println("Login attempt for user: " + username);
+            System.out.println("Password received (length): " + password.length());
             // Authenticate user
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
@@ -55,6 +63,7 @@ public class AuthController {
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("username", userDetails.getUsername());
+
 
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
@@ -70,7 +79,7 @@ public class AuthController {
 
         User user = new User();
         user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(password);
         user.setRole(Role.ROLE_USER);
 
         boolean success = userService.addUser(user);
@@ -91,23 +100,4 @@ public class AuthController {
         return ResponseEntity.ok("Logged out successfully. Please discard your token.");
     }
 
-    @GetMapping("/debug/auth")
-    public ResponseEntity<String> debugAuthentication(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-
-        StringBuilder debug = new StringBuilder();
-        debug.append("Authorization Header: ").append(authHeader != null ? authHeader.substring(0, 20) + "..." : "null");
-
-        debug.append("\n\nAuthentication exists: ").append(auth != null);
-
-        if (auth != null) {
-            debug.append("\nName: ").append(auth.getName());
-            debug.append("\nAuthenticated: ").append(auth.isAuthenticated());
-            debug.append("\nAuthorities: ").append(auth.getAuthorities());
-            debug.append("\nPrincipal Type: ").append(auth.getPrincipal().getClass().getName());
-        }
-
-        return ResponseEntity.ok(debug.toString());
-    }
 }
