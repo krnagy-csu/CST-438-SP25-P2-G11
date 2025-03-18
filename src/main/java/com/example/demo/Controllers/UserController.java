@@ -4,22 +4,12 @@
 package com.example.demo.Controllers;
 
 import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import com.example.demo.Tables.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.boot.SpringApplication;
 // import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.security.Principal;
@@ -62,7 +52,6 @@ public class UserController {
             logger.warn("No users found in database.");
             return ResponseEntity.status(404).body(null);
         }
-
         logger.info("Returning {} users.", users.size());
         return ResponseEntity.ok(users);
     }
@@ -86,6 +75,7 @@ public class UserController {
     @DeleteMapping("/deleteUser/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public boolean deleteUser(@PathVariable Integer id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userService.deleteUser(id);
     }
 
@@ -96,7 +86,8 @@ public class UserController {
 
     @PutMapping("/put")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public boolean putUser(@RequestBody User user) {
-        return userService.putUser(user);
+    public boolean putUser(@RequestParam String username, @RequestParam String password, @RequestParam String role) {
+            Role userRole = Role.valueOf(role);
+            return userService.putUser(username, password, userRole);
     }
 }

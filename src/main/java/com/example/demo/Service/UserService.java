@@ -2,6 +2,7 @@ package com.example.demo.Service;
 
 import java.util.List;
 
+import com.example.demo.Tables.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,6 @@ public class UserService {
         return userRepo.findByUsername(username);
     }
 
-
     public boolean deleteUser(Integer id) {
         if (userRepo.existsById(id)) { //checks if user exists before deleting
             userRepo.deleteById(id);
@@ -44,7 +44,6 @@ public class UserService {
         }
         return false;
     }
-
 
     public boolean addUser(User user) {
         try {
@@ -74,13 +73,27 @@ public class UserService {
         return true;
     }
 
-    public boolean putUser(User user){
-        try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepo.save(user);
+    public boolean putUser(String username, String password, Role role){
+        User existingUser = getUserByUsername(username);
+
+        if (existingUser != null) {
+            // Update existing user
+            if (password != null && !password.isEmpty()) {
+                existingUser.setPassword(passwordEncoder.encode(password));
+            }
+            existingUser.setRole(role);
+
+            userRepo.save(existingUser);
             return true;
-        } catch (Exception e) {
-            return false;
+        } else {
+            // Create new user
+            User newUser = new User();
+            newUser.setUsername(username);
+            newUser.setPassword(passwordEncoder.encode(password));
+            newUser.setRole(role);
+
+            userRepo.save(newUser);
+            return true;
         }
     }
 }
