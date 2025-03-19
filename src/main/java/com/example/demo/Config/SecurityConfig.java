@@ -40,7 +40,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/register","/auth/logout","/","/index.html", "/public/**","/static/**", "/Frontend/**").permitAll() //allows anyone access to these endpoints
+                        .requestMatchers(
+                                "/auth/login", "/auth/register","/auth/logout","/",
+                                "/index.html", "/public/**","/static/**", "/Frontend/**","/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll() //allows anyone access to these endpoints
                         .requestMatchers("/user/deleteUser/{id}", "/user/all", "/user/put").hasAuthority("ROLE_ADMIN") //must be admin
                         .requestMatchers("/user/**","/tier/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN") //can be either but signed in
                         .anyRequest().authenticated()

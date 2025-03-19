@@ -16,8 +16,8 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Controller
-    public static class FallbackController {
-        @GetMapping(value = "/**/{path:[^.]*}")
+    public class FallbackController {
+        @GetMapping(value = "/{path:[^\\.]*}")
         public String forward() {
             return "forward:/index.html";
         }
