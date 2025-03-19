@@ -558,3 +558,5 @@ FodyWeavers.xsd
 *.jar
 *.bin
 /.gradle
+.gradle/
+build/
