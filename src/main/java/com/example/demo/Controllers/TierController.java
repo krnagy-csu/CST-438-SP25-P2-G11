@@ -10,7 +10,7 @@ import com.example.demo.Tables.Tier;
 import com.example.demo.Tables.Subject;
 import com.example.demo.Tables.SubjectEntry;
 
-//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/tier")
 public class TierController {
