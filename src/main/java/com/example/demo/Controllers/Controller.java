@@ -13,7 +13,7 @@ public class Controller {
     public String index() {
         return "Hello this is the / endpoint.";
     }
-    
+
      */
 
     @GetMapping("/greeting")
