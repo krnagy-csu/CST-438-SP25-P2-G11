@@ -24,7 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.demo.Service.UserService;
 import com.example.demo.Tables.User;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/user")
 public class UserController {
