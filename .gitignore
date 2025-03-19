@@ -557,3 +557,4 @@ FodyWeavers.xsd
 *.lock
 *.jar
 *.bin
+/.gradle
