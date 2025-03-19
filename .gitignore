@@ -556,3 +556,4 @@ FodyWeavers.xsd
 *.jar
 *.lock
 *.jar
+*.bin
