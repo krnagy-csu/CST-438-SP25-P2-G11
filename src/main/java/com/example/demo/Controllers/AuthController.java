@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "https://cst438-project2-33edc6317781.herokuapp.com")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
