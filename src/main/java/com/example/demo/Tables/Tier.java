@@ -62,6 +62,10 @@ public class Tier {
         this.id = id;
     }
 
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public void setSubject(String subject) {
         this.subject = subject;
     }
