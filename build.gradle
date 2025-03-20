@@ -27,6 +27,7 @@ dependencies {
     implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.springframework.security:spring-security-crypto'
+    //Deep Java Library which gives us SentenceTransformer to help us find similarity of two things 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

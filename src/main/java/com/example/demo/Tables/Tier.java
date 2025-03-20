@@ -10,7 +10,6 @@ public class Tier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
     private String subject;
     private String s;
     private String a;
@@ -32,6 +31,7 @@ public class Tier {
     }
 
     public Tier(){}
+    
     public Integer getId() {
         return id;
     }
@@ -60,6 +60,10 @@ public class Tier {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public void setSubject(String subject) {

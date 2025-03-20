@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-//@CrossOrigin(origins = "https://cst438-project2-33edc6317781.herokuapp.com")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class Controller {
 
