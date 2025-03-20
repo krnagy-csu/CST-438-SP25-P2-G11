@@ -1,5 +1,8 @@
 package com.example.demo.Controllers;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,11 +51,45 @@ public class TierController {
     }
 
 
-    @GetMapping("/compare")
+    @GetMapping("/compare") //id will be id of the tier you want to compare and subject is the tier you want to compares subject
     public String compareTiers(@RequestParam Integer id, @RequestParam String subject){
-        // ProcessBuilder pb = new ProcessBuilder("python", "ml_embeddings/mlembedder.py",)
-        String percentage = ""; 
-        return percentage;
+        List<Tier> tiers = tierService.getTiersBySubject(subject);
+        Integer randNum = (int) Math.rint(Math.random() * (tiers.size()-1 - 0));
+        Tier randomTier = tiers.get(randNum);
+        Tier tierByID = tierService.getTier(id);
+        String tierByIDText = "S: " + tierByID.getS() + " ^ A: " + tierByID.getA() + " ^ B: " + tierByID.getB() + " ^ C: " + tierByID.getC() + " ^ D: " + tierByID.getD() + " ^ F: " + tierByID.getF();
+        String randomTierText = "S: " + randomTier.getS() + " ^ A: " + randomTier.getA() + " ^ B: " + randomTier.getB() + " ^ C: " + randomTier.getC() + " ^ D: " + randomTier.getD() + " ^ F: " + randomTier.getF();
+
+        //everything below is to run the python file
+        ProcessBuilder pb = new ProcessBuilder("python", "ml_embeddings/mlembedder.py", tierByIDText, randomTierText);
+        pb.redirectErrorStream(true);
+        Process process = null;
+        try {
+            process = pb.start();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder pythonOutput = new StringBuilder();
+        String percentage = "";
+        try {
+            while ((percentage = reader.readLine()) != null) {
+                pythonOutput.append(percentage);
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println(pythonOutput.toString());
+        return pythonOutput.toString();
     }
     // @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @PostMapping("/add")
