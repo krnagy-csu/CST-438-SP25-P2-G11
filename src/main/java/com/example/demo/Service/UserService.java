@@ -66,6 +66,9 @@ public class UserService {
             existingUser.setUsername(userUpdates.getUsername());
         }//updates password
         if (userUpdates.getPassword() != null) {
+            if (!validatePassword(userUpdates.getPassword())) {
+                return false; // Invalid password, update fails
+            }
             existingUser.setPassword(passwordEncoder.encode(userUpdates.getPassword()));
         }
         //saves changes
@@ -96,4 +99,10 @@ public class UserService {
             return true;
         }
     }
+    //checks if password is greater than or equal to 6 and has a special char
+    public boolean validatePassword(String password) {
+        return password.length() >= 6 && password.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
+    }
+
+
 }

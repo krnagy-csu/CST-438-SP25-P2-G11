@@ -74,15 +74,15 @@ export default function Admin() {
                 password: user.password
             }),
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to update user");
-            }
-            return response.text();
-        })
-        .then(result => {
-            console.log("User updated successfully:", result);
-            fetchUsers(); // Refresh user list
+        .then(response => response.json())
+            .then(success => {
+                if (!success) {
+                    setErrorMessage("Password must be at least 6 characters long and contain at least one special character.");
+                    return;
+                }
+                console.log("User updated successfully");
+                fetchUsers(); // Refresh user list
+
         })
         .catch(error => {
             console.error("Error updating user:", error);

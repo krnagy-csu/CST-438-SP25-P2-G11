@@ -99,33 +99,28 @@ export default function Profile() {
             },
             body: JSON.stringify(updateData)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to update profile");
+          .then(response => response.json())
+          .then(success => {
+            if (!success) {
+             setUpdateMessage("Update failed: Password must be at least 6 characters long and contain at least one special character.");
+             return;
+        }
+
+           setUpdateMessage("Profile updated successfully!");
+
+         // If username was changed, update it in localStorage
+           if (updateData.username) {
+             localStorage.setItem("username", updatedUsername);
             }
-            return response.text();
-        })
-        .then(result => {
-            setUpdateMessage("Profile updated successfully!");
-            
-            // If username was changed, update localStorage
-            if (updateData.username) {
-                localStorage.setItem("username", updatedUsername);
-            }
-            
-            // Refresh user data
-            fetchUserData();
-            
-            // Exit edit mode
-            setEditMode(false);
-            setUpdatedPassword("");
-            setConfirmPassword("");
+
+           fetchUserData();
+           setEditMode(false);
         })
         .catch(error => {
             console.error("Error updating profile:", error);
-            setUpdateMessage("Error: " + error.message);
+            setUpdateMessage("Error updating profile. Please try again.");
         });
-    };
+};
     
     return (
         <div>

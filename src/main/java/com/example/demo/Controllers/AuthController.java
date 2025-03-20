@@ -77,6 +77,11 @@ public class AuthController {
             return ResponseEntity.badRequest().body("User already exists!");
         }
 
+
+        if (!userService.validatePassword(password)) {
+            return ResponseEntity.badRequest().body("Password must be at least 6 characters long and contain at least one special character.");
+        }
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
