@@ -107,8 +107,24 @@ public class UserController {
 
     @PutMapping("/put")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public boolean putUser(@RequestParam String username, @RequestParam String password, @RequestParam String role) {
-            Role userRole = Role.valueOf(role);
-            return userService.putUser(username, password, userRole);
+    public ResponseEntity<String> putUser(@RequestParam String username, @RequestParam String password, @RequestParam String role) {
+        Role userRole = Role.valueOf(role);
+
+        // Validate password before allowing user creation/update
+        if (password.length() < 6) {
+            return ResponseEntity.badRequest().body("Error: Password must be at least 6 characters long.");
+        }
+        if (!password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+            return ResponseEntity.badRequest().body("Error: Password must contain at least one special character.");
+        }
+
+        boolean success = userService.putUser(username, password, userRole);
+
+        if (success) {
+            return ResponseEntity.ok("Success: User has been added or updated.");
+        } else {
+            return ResponseEntity.internalServerError().body("Error: Failed to add or update user.");
+        }
     }
+
 }

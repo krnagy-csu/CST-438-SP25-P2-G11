@@ -127,30 +127,30 @@ export default function Admin() {
             return;
         }
 
-        // Using the PUT endpoint for admin to create users
         fetch(`/user/put?username=${encodeURIComponent(newUser.username)}&password=${encodeURIComponent(newUser.password)}&role=${encodeURIComponent(newUser.role)}`, {
             method: "PUT",
             headers: {
                 "Authorization": `Bearer ${token}`
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to add user");
+        .then(response => response.text().then(text => ({ status: response.status, text })))
+        .then(({ status, text }) => {
+            if (status !== 200) {
+                setErrorMessage(text); // Display backend validation message
+                return;
             }
-            return response.text();
-        })
-        .then(result => {
-            console.log("User added successfully:", result);
+
+            setErrorMessage(""); // Clear errors on success
+            console.log("User added successfully:", text);
             setNewUser({ username: "", password: "", role: "ROLE_USER" });
             fetchUsers(); // Refresh the list of users
-            setErrorMessage("");
         })
         .catch(error => {
             console.error("Error adding user:", error);
-            setErrorMessage(error.message);
+            setErrorMessage("Error adding user.");
         });
     };
+
 
     return (
         <div>
