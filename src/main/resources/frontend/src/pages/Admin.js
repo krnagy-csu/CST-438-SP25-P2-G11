@@ -12,7 +12,7 @@ export default function Admin() {
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
-    // Check if user is authenticated on component mount
+    // Check if user is authenticated
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
         if (!storedToken) {
@@ -62,33 +62,34 @@ export default function Admin() {
     };
 
     // Save updated user data
-    const handleSave = (user) => {
-        fetch(`user/editUser/${user.id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                username: user.username,
-                password: user.password
-            }),
-        })
-        .then(response => response.json())
-            .then(success => {
-                if (!success) {
-                    setErrorMessage("Password must be at least 6 characters long and contain at least one special character.");
-                    return;
-                }
-                console.log("User updated successfully");
-                fetchUsers(); // Refresh user list
+   const handleSave = (user) => {
+       fetch(`/user/editUser/${user.id}`, {
+           method: "PATCH",
+           headers: {
+               "Content-Type": "application/json",
+               "Authorization": `Bearer ${token}`
+           },
+           body: JSON.stringify({
+               username: user.username,
+               password: user.password
+           }),
+       })
+       .then(response => response.text().then(text => ({ status: response.status, text })))
+       .then(({ status, text }) => {
+           if (status !== 200) {
+               setErrorMessage(text); // Display backend error message
+               return;
+           }
 
-        })
-        .catch(error => {
-            console.error("Error updating user:", error);
-            setErrorMessage(error.message);
-        });
-    };
+           console.log("User updated successfully:", text);
+           fetchUsers();
+       })
+       .catch(error => {
+           console.error("Error updating user:", error);
+           setErrorMessage("Error updating user.");
+       });
+   };
+
 
     // Delete user from database
     const handleDelete = (id) => {

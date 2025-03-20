@@ -80,9 +80,30 @@ public class UserController {
     }
 
     @PatchMapping("/editUser/{id}")
-    public boolean editUser(@PathVariable Integer id, @RequestBody User userUpdates) {
-        return userService.editUser(id, userUpdates);
+    public ResponseEntity<String> editUser(@PathVariable Integer id, @RequestBody User userUpdates) {
+        User existingUser = userService.getUser(id);
+        if (existingUser == null) {
+            return ResponseEntity.badRequest().body("User not found.");
+        }
+
+        // Validate password if it's being updated
+        if (userUpdates.getPassword() != null) {
+            if (userUpdates.getPassword().length() < 6) {
+                return ResponseEntity.badRequest().body("Password must be at least 6 characters long.");
+            }
+            if (!userUpdates.getPassword().matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+                return ResponseEntity.badRequest().body("Password must contain at least one special character.");
+            }
+        }
+
+        boolean success = userService.editUser(id, userUpdates);
+        if (success) {
+            return ResponseEntity.ok("Success: The user profile has been updated successfully.");
+        } else {
+            return ResponseEntity.internalServerError().body("Error: Could not update the user. Please try again later.");
+        }
     }
+
 
     @PutMapping("/put")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
