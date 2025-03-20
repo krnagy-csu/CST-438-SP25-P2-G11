@@ -1,6 +1,7 @@
 package com.example.demo.Controllers;
 
 import com.example.demo.Config.JwtUtils;
+import com.example.demo.Service.AuthService;
 import com.example.demo.Service.UserService;
 import com.example.demo.Tables.User;
 import com.example.demo.Tables.Role;
@@ -103,6 +104,15 @@ public class AuthController {
         logger.info("User logged out");
 
         return ResponseEntity.ok("Logged out successfully. Please discard your token.");
+    }
+
+    @DeleteMapping("/deleteAcc")
+    public ResponseEntity<String> deleteAcc(@RequestParam Integer id, @RequestParam String password){
+        if (!userService.deleteAccount(id, password)){
+            return ResponseEntity.internalServerError().body("Cannot Delete Account");
+        }else{
+            return ResponseEntity.ok("Account Deleted");
+        }
     }
 
 }

@@ -148,6 +148,10 @@ export default function Profile() {
                                 <button onClick={handleLogout} style={styles.dangerButton}>
                                     Logout
                                 </button>
+
+                                <button onClick={handleLogout} style={styles.dangerButton}>
+                                    Delete Account
+                               </button>
                             </div>
                         </div>
                     ) : (

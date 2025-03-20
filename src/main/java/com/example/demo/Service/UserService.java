@@ -99,6 +99,19 @@ public class UserService {
             return true;
         }
     }
+
+    public boolean deleteAccount(Integer id, String password) {
+        User existingUser = userRepo.findById(id).orElse(null);
+
+        if (password.matches(existingUser.getPassword())) {
+            if (userRepo.existsById(id)) { //checks if user exists before deleting
+                userRepo.deleteById(id);
+                return true;
+            }
+        }
+        return false;
+    }
+
     //checks if password is greater than or equal to 6 and has a special char
     public boolean validatePassword(String password) {
         return password.length() >= 6 && password.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
