@@ -107,12 +107,13 @@ public class AuthController {
     }
 
     @DeleteMapping("/deleteAcc")
-    public ResponseEntity<String> deleteAcc(@RequestParam Integer id, @RequestParam String password){
-        if (!userService.deleteAccount(id, password)){
+    public ResponseEntity<String> deleteAcc(@RequestParam Integer id, @RequestParam String password) {
+        if (!userService.deleteAccount(id, password)) {
             return ResponseEntity.internalServerError().body("Cannot Delete Account");
-        }else{
+        } else {
             return ResponseEntity.ok("Account Deleted");
         }
     }
+
 
 }

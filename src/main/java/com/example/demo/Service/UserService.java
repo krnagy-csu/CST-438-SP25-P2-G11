@@ -103,12 +103,11 @@ public class UserService {
     public boolean deleteAccount(Integer id, String password) {
         User existingUser = userRepo.findById(id).orElse(null);
 
-        if (password.matches(existingUser.getPassword())) {
-            if (userRepo.existsById(id)) { //checks if user exists before deleting
-                userRepo.deleteById(id);
-                return true;
-            }
+        if (existingUser != null && passwordEncoder.matches(password, existingUser.getPassword())) {
+            userRepo.deleteById(id);
+            return true;
         }
+
         return false;
     }
 

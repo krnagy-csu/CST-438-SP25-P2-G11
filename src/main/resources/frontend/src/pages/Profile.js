@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Profile() {
+    // State variables for managing user data and form states
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -10,22 +11,26 @@ export default function Profile() {
     const [updatedPassword, setUpdatedPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [updateMessage, setUpdateMessage] = useState("");
+    const [deletePassword, setDeletePassword] = useState("");
+    const [deleteMessage, setDeleteMessage] = useState("");
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const navigate = useNavigate();
-    
+
+
     useEffect(() => {
         fetchUserData();
     }, []);
-    
+
+    // Fetch user details from the backend
     const fetchUserData = () => {
         const token = localStorage.getItem("token");
         const username = localStorage.getItem("username");
-        
+
         if (!token || !username) {
             navigate("/LoginOrSignup");
             return;
         }
-        
-        // Fetch user data
+
         fetch(`/user/username/${username}`, {
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -48,40 +53,47 @@ export default function Profile() {
             setLoading(false);
         });
     };
-    
+
+    // Handle user logout
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         navigate("/LoginOrSignup");
     };
-    
+
+    // Toggle edit mode for the profile
     const toggleEditMode = () => {
         setEditMode(!editMode);
         setUpdatedPassword("");
         setConfirmPassword("");
         setUpdateMessage("");
     };
-    
+
+    // Handle profile update submission
     const handleUpdateProfile = (e) => {
         e.preventDefault();
         setUpdateMessage("");
 
         const token = localStorage.getItem("token");
 
+        // Prepare update payload
         const updateData = {
             username: updatedUsername !== userData.username ? updatedUsername : null,
             password: updatedPassword || null
         };
 
+        // Remove null fields
         Object.keys(updateData).forEach(key =>
             updateData[key] === null && delete updateData[key]
         );
 
+        // Prevent unnecessary request if nothing changed
         if (Object.keys(updateData).length === 0) {
             setUpdateMessage("No changes to update.");
             return;
         }
 
+        // Send PATCH request to update profile
         fetch(`/user/editUser/${userData.id}`, {
             method: "PATCH",
             headers: {
@@ -93,7 +105,7 @@ export default function Profile() {
         .then(response => response.text().then(text => ({ status: response.status, text })))
         .then(({ status, text }) => {
             if (status !== 200) {
-                setUpdateMessage(text); // Show backend error message
+                setUpdateMessage(text);
                 return;
             }
 
@@ -112,9 +124,35 @@ export default function Profile() {
         });
     };
 
-    
+    // Handle account deletion request
+    const handleDeleteAccount = () => {
+        const token = localStorage.getItem("token");
+
+        fetch(`/deleteAcc?id=${userData.id}&password=${encodeURIComponent(deletePassword)}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        .then(res => res.text().then(text => ({ status: res.status, text })))
+        .then(({ status, text }) => {
+            if (status === 200) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("username");
+                navigate("/LoginOrSignup");
+            } else {
+                setDeleteMessage(text || "Could not delete account.");
+            }
+        })
+        .catch(error => {
+            console.error("Delete account error:", error);
+            setDeleteMessage("An error occurred. Please try again.");
+        });
+    };
+
     return (
         <div>
+            {/* Navigation Links */}
             <nav style={styles.nav}>
                 <Link to="/" style={styles.navLink}> Home Page</Link>
                 <Link to="/Admin" style={styles.navLink}> Admin Page</Link>
@@ -124,7 +162,8 @@ export default function Profile() {
             </nav>
 
             <h1 style={styles.heading}>User Profile</h1>
-            
+
+
             {loading ? (
                 <p style={styles.centeredText}>Loading user data...</p>
             ) : error ? (
@@ -134,28 +173,56 @@ export default function Profile() {
             ) : userData ? (
                 <div style={styles.card}>
                     {!editMode ? (
-                        // View mode
+                        // View Mode
                         <div>
                             <h2>Welcome, {userData.username}!</h2>
                             <p><strong>User ID:</strong> {userData.id}</p>
                             <p><strong>Role:</strong> {userData.role}</p>
-                            
-                            <div style={styles.buttonContainer}>
-                                <button onClick={toggleEditMode} style={styles.primaryButton}>
-                                    Edit Profile
-                                </button>
-                                
-                                <button onClick={handleLogout} style={styles.dangerButton}>
-                                    Logout
-                                </button>
 
-                                <button onClick={handleLogout} style={styles.dangerButton}>
-                                    Delete Account
-                               </button>
+                            <div style={styles.buttonContainer}>
+                                <button onClick={toggleEditMode} style={styles.primaryButton}>Edit Profile</button>
+                                <button onClick={handleLogout} style={styles.dangerButton}>Logout</button>
+
+                                {/* Delete Account Confirmation */}
+                                {!showDeleteConfirm ? (
+                                    <button onClick={() => setShowDeleteConfirm(true)} style={styles.dangerButton}>
+                                        Delete Account
+                                    </button>
+                                ) : (
+                                    <div>
+                                        <input
+                                            type="password"
+                                            placeholder="Enter password to confirm"
+                                            value={deletePassword}
+                                            onChange={(e) => setDeletePassword(e.target.value)}
+                                            style={styles.input}
+                                        />
+                                        <div style={styles.buttonContainer}>
+                                            <button onClick={handleDeleteAccount} style={styles.dangerButton}>
+                                                Confirm Delete
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setShowDeleteConfirm(false);
+                                                    setDeletePassword("");
+                                                    setDeleteMessage("");
+                                                }}
+                                                style={styles.neutralButton}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                        {deleteMessage && (
+                                            <div style={styles.errorMessage}>
+                                                {deleteMessage}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ) : (
-                        // Edit mode
+                        // Edit Mode
                         <div>
                             <h2>Edit Profile</h2>
                             <form onSubmit={handleUpdateProfile}>
@@ -193,21 +260,14 @@ export default function Profile() {
                                         />
                                     </div>
                                 )}
-                                
+
                                 <div style={styles.buttonContainer}>
-                                    <button type="submit" style={styles.primaryButton}>
-                                        Save Changes
-                                    </button>
-                                    <button 
-                                        type="button" 
-                                        onClick={toggleEditMode}
-                                        style={styles.neutralButton}
-                                    >
-                                        Cancel
-                                    </button>
+                                    <button type="submit" style={styles.primaryButton}>Save Changes</button>
+                                    <button type="button" onClick={toggleEditMode} style={styles.neutralButton}>Cancel</button>
                                 </div>
                             </form>
-                            
+
+                            {/* Message for profile update status */}
                             {updateMessage && (
                                 <div style={
                                     updateMessage.includes("Error") || updateMessage.includes("not match")
@@ -250,8 +310,8 @@ const styles = {
         textAlign: "center"
     },
     card: {
-        padding: "20px", 
-        border: "1px solid #ddd", 
+        padding: "20px",
+        border: "1px solid #ddd",
         borderRadius: "5px",
         maxWidth: "500px",
         margin: "0 auto"
